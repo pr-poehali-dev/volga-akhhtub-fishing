@@ -9,18 +9,14 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { toast } from '@/hooks/use-toast';
 
-const Index = () => {
+const BookingDialog = ({ tourTitle }: { tourTitle: string }) => {
   const [bookingData, setBookingData] = useState({
     name: '',
     email: '',
     phone: '',
-    date: '',
-    tour: ''
+    date: ''
   });
-
-  const handleBooking = (tourName: string) => {
-    setBookingData({ ...bookingData, tour: tourName });
-  };
+  const [open, setOpen] = useState(false);
 
   const submitBooking = () => {
     if (!bookingData.name || !bookingData.email || !bookingData.phone || !bookingData.date) {
@@ -35,8 +31,80 @@ const Index = () => {
       title: 'Заявка отправлена!',
       description: `Мы свяжемся с вами в ближайшее время, ${bookingData.name}`,
     });
-    setBookingData({ name: '', email: '', phone: '', date: '', tour: '' });
+    setBookingData({ name: '', email: '', phone: '', date: '' });
+    setOpen(false);
   };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="w-full" size="lg">
+          <Icon name="Calendar" size={18} className="mr-2" />
+          Забронировать
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Бронирование тура</DialogTitle>
+          <DialogDescription>
+            Заполните форму, и мы свяжемся с вами для подтверждения
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Имя</Label>
+            <Input 
+              id="name" 
+              placeholder="Ваше имя"
+              value={bookingData.name}
+              onChange={(e) => setBookingData({...bookingData, name: e.target.value})}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder="your@email.com"
+              value={bookingData.email}
+              onChange={(e) => setBookingData({...bookingData, email: e.target.value})}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Телефон</Label>
+            <Input 
+              id="phone" 
+              type="tel" 
+              placeholder="+7 (___) ___-__-__"
+              value={bookingData.phone}
+              onChange={(e) => setBookingData({...bookingData, phone: e.target.value})}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="date">Желаемая дата</Label>
+            <Input 
+              id="date" 
+              type="date"
+              value={bookingData.date}
+              onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
+            />
+          </div>
+          <div className="bg-muted p-3 rounded-md">
+            <p className="text-sm font-semibold">Выбранный тур:</p>
+            <p className="text-sm">{tourTitle}</p>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={submitBooking} className="w-full">
+            Отправить заявку
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const Index = () => {
 
   const tours = [
     {
@@ -226,75 +294,7 @@ const Index = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        className="w-full" 
-                        size="lg"
-                        onClick={() => handleBooking(tour.title)}
-                      >
-                        <Icon name="Calendar" size={18} className="mr-2" />
-                        Забронировать
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Бронирование тура</DialogTitle>
-                        <DialogDescription>
-                          Заполните форму, и мы свяжемся с вами для подтверждения
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Имя</Label>
-                          <Input 
-                            id="name" 
-                            placeholder="Ваше имя"
-                            value={bookingData.name}
-                            onChange={(e) => setBookingData({...bookingData, name: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input 
-                            id="email" 
-                            type="email" 
-                            placeholder="your@email.com"
-                            value={bookingData.email}
-                            onChange={(e) => setBookingData({...bookingData, email: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Телефон</Label>
-                          <Input 
-                            id="phone" 
-                            type="tel" 
-                            placeholder="+7 (___) ___-__-__"
-                            value={bookingData.phone}
-                            onChange={(e) => setBookingData({...bookingData, phone: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="date">Желаемая дата</Label>
-                          <Input 
-                            id="date" 
-                            type="date"
-                            value={bookingData.date}
-                            onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
-                          />
-                        </div>
-                        <div className="bg-muted p-3 rounded-md">
-                          <p className="text-sm font-semibold">Выбранный тур:</p>
-                          <p className="text-sm">{bookingData.tour}</p>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button onClick={submitBooking} className="w-full">
-                          Отправить заявку
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                  <BookingDialog tourTitle={tour.title} />
                 </CardFooter>
               </Card>
             ))}
